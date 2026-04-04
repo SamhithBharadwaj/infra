@@ -12,7 +12,7 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=15d"
+      - "--storage.tsdb.retention.time=24h"
       - "--web.enable-lifecycle"
     restart: unless-stopped
 
@@ -75,6 +75,7 @@ services:
       - /var/log:/var/log:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - ./promtail/config.yml:/etc/promtail/config.yml:ro
+      - /mnt/storage/docker/promtail:/var/lib/promtail
     command:
       - "-config.file=/etc/promtail/config.yml"
     restart: unless-stopped

@@ -4,7 +4,7 @@
     "labels": { "node": "druva" }
   },
   {
-    "targets": ["192.168.0.242:9100"],
+    "targets": ["ideapad:9100"],
     "labels": { "node": "ideapad" }
   }
 ]

@@ -1,0 +1,158 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Postgres Up",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        { "expr": "pg_up_up", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Active Connections",
+      "gridPos": { "x": 6, "y": 0, "w": 18, "h": 8 },
+      "targets": [
+        {
+          "expr": "pg_connections_numbackends",
+          "legendFormat": "{{datname}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Transactions (Commit/sec)",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(pg_xact_xact_commit[1m])",
+          "legendFormat": "{{datname}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Transactions (Rollback/sec)",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(pg_xact_xact_rollback[1m])",
+          "legendFormat": "{{datname}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "title": "Database Size",
+      "gridPos": { "x": 0, "y": 16, "w": 24, "h": 6 },
+      "targets": [
+        {
+          "expr": "pg_db_size_size",
+          "legendFormat": "{{datname}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "bytes" }
+      }
+    },
+
+    {
+      "type": "table",
+      "title": "Top Queries (by Calls)",
+      "gridPos": { "x": 0, "y": 22, "w": 24, "h": 8 },
+      "targets": [
+        {
+          "expr": "topk(10, pg_stat_statements_calls_calls)",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "queryid": "Query ID",
+              "Value": "Calls"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Slow Queries (Total Time)",
+      "gridPos": { "x": 0, "y": 30, "w": 24, "h": 8 },
+      "targets": [
+        {
+          "expr": "topk(10, pg_stat_statements_total_time_total_exec_time)",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "queryid": "Query ID",
+              "Value": "Total Time"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Query Latency (Mean Time)",
+      "gridPos": { "x": 0, "y": 38, "w": 24, "h": 8 },
+      "targets": [
+        {
+          "expr": "topk(10, pg_stat_statements_mean_time_mean_exec_time)",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "queryid": "Query ID",
+              "Value": "Mean Time"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["postgres", "queryid-safe"],
+  "templating": { "list": [] },
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Postgres Dashboard (QueryID Safe)",
+  "version": 4
+}

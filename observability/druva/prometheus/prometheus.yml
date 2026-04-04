@@ -23,3 +23,8 @@ scrape_configs:
       - files:
           - "/etc/prometheus/targets/cadvisor.json"
         refresh_interval: 30s
+
+  # --- Postgres Exporter (PostgreSQL metrics) ---
+  - job_name: "postgres"
+    static_configs:
+      - targets: ["ideapad:9187"]

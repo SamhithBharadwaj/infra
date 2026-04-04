@@ -3,27 +3,54 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "links": [],
+  "refresh": "30s",
+  "timezone": "browser",
+  "links": [
+    {
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "title": "→ Node Metrics",
+      "tooltip": "Switch to host-level node metrics",
+      "type": "link",
+      "url": "/d/yantra-node-metrics"
+    }
+  ],
   "panels": [
     {
+      "id": 1,
+      "title": "Overview",
+      "type": "row",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 2,
       "title": "Running Containers",
+      "description": "Number of currently running containers per node",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
           "thresholds": {
+            "mode": "absolute",
             "steps": [
               { "color": "green", "value": null }
             ]
-          }
+          },
+          "color": { "mode": "thresholds" },
+          "mappings": []
         },
         "overrides": []
       },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
         "colorMode": "background",
-        "graphMode": "none"
+        "graphMode": "area",
+        "textMode": "auto",
+        "orientation": "auto"
       },
       "targets": [
         {
@@ -34,16 +61,49 @@
       ]
     },
     {
+      "id": 3,
+      "title": "Resource Usage",
+      "type": "row",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 4,
       "title": "Container CPU Usage %",
+      "description": "CPU usage rate per container (5m rolling average). Threshold lines at 70% and 90%.",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 7 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
-          "custom": { "fillOpacity": 10 }
+          "min": 0,
+          "color": { "mode": "palette-classic" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 12,
+            "lineWidth": 2,
+            "thresholdsStyle": { "mode": "line" }
+          }
         },
         "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max", "lastNotNull"]
+        }
       },
       "targets": [
         {
@@ -54,16 +114,38 @@
       ]
     },
     {
+      "id": 5,
       "title": "Container Memory Usage",
+      "description": "Memory usage vs configured limit per container. Dashed red line = limit.",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 7 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
           "unit": "bytes",
-          "custom": { "fillOpacity": 10 }
+          "color": { "mode": "palette-classic" },
+          "custom": { "fillOpacity": 12, "lineWidth": 2 }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* — limit$" },
+            "properties": [
+              { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } },
+              { "id": "custom.fillOpacity", "value": 0 },
+              { "id": "custom.lineWidth", "value": 1 },
+              { "id": "color", "value": { "fixedColor": "semi-dark-red", "mode": "fixed" } }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max", "lastNotNull"]
+        }
       },
       "targets": [
         {
@@ -79,16 +161,28 @@
       ]
     },
     {
+      "id": 6,
       "title": "Container Memory RSS",
+      "description": "Resident Set Size — physical RAM actually held by each container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 16 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
           "unit": "bytes",
-          "custom": { "fillOpacity": 10 }
+          "color": { "mode": "palette-classic" },
+          "custom": { "fillOpacity": 12, "lineWidth": 2 }
         },
         "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max", "lastNotNull"]
+        }
       },
       "targets": [
         {
@@ -99,16 +193,48 @@
       ]
     },
     {
+      "id": 7,
+      "title": "Network & Disk I/O",
+      "type": "row",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 25 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 8,
       "title": "Container Network I/O (bytes/s)",
+      "description": "Network receive (green) and transmit (orange) throughput per container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 26 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
           "unit": "Bps",
-          "custom": { "fillOpacity": 10 }
+          "custom": { "fillOpacity": 10, "lineWidth": 2 }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* — rx$" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "semi-dark-green", "mode": "fixed" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".* — tx$" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "semi-dark-orange", "mode": "fixed" } }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max", "lastNotNull"]
+        }
       },
       "targets": [
         {
@@ -124,16 +250,40 @@
       ]
     },
     {
+      "id": 9,
       "title": "Container Disk I/O (bytes/s)",
+      "description": "Block device read (blue) and write (orange) throughput per container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 26 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
           "unit": "Bps",
-          "custom": { "fillOpacity": 10 }
+          "custom": { "fillOpacity": 10, "lineWidth": 2 }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* — read$" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "semi-dark-blue", "mode": "fixed" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".* — write$" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "semi-dark-orange", "mode": "fixed" } }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": {
+          "showLegend": true,
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max", "lastNotNull"]
+        }
       },
       "targets": [
         {
@@ -149,25 +299,41 @@
       ]
     },
     {
-      "title": "Container Restarts",
+      "id": 10,
+      "title": "Health",
+      "type": "row",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 35 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 11,
+      "title": "Container Restarts (last 24h)",
+      "description": "Number of container restarts in the past 24 hours. Green = 0, Yellow ≥ 1, Red ≥ 5.",
       "type": "stat",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 36 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
           "thresholds": {
+            "mode": "absolute",
             "steps": [
               { "color": "green", "value": null },
               { "color": "yellow", "value": 1 },
               { "color": "red", "value": 5 }
             ]
-          }
+          },
+          "color": { "mode": "thresholds" },
+          "mappings": []
         },
         "overrides": []
       },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
-        "colorMode": "background"
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
       },
       "targets": [
         {

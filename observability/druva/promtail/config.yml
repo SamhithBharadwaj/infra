@@ -3,22 +3,12 @@ server:
   grpc_listen_port: 0
 
 positions:
-  filename: /tmp/positions.yaml
+  filename: /var/lib/promtail/positions.yaml
 
 clients:
   - url: http://localhost:3100/loki/api/v1/push
 
 scrape_configs:
-  # System logs
-  - job_name: system
-    static_configs:
-      - targets:
-          - localhost
-        labels:
-          job: syslog
-          host: druva
-          __path__: /var/log/{syslog,auth.log,kern.log,dpkg.log}
-
   # Docker container logs (auto-discovers all containers)
   - job_name: docker
     static_configs:
