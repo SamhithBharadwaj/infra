@@ -124,22 +124,27 @@
       ]
     },
     {
-      "title": "Container Filesystem Usage",
+      "title": "Container Disk I/O (bytes/s)",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
       "fieldConfig": {
         "defaults": {
-          "unit": "bytes",
+          "unit": "Bps",
           "custom": { "fillOpacity": 10 }
         },
         "overrides": []
       },
       "targets": [
         {
-          "expr": "container_fs_usage_bytes{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}",
-          "legendFormat": "{{ node }} / {{ name }}",
+          "expr": "rate(container_blkio_device_usage_total{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\", operation=\"Read\"}[5m])",
+          "legendFormat": "{{ node }} / {{ name }} — read",
           "refId": "A"
+        },
+        {
+          "expr": "rate(container_blkio_device_usage_total{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\", operation=\"Write\"}[5m])",
+          "legendFormat": "{{ node }} / {{ name }} — write",
+          "refId": "B"
         }
       ]
     },
