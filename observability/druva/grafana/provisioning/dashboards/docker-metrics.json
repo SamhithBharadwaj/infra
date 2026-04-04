@@ -1,0 +1,207 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "title": "Running Containers",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "count(container_last_seen{node=~\"$node\", name=~\".+\", name!~\"POD\"}) by (node)",
+          "legendFormat": "{{ node }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Container CPU Usage %",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": { "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}[5m]) * 100",
+          "legendFormat": "{{ node }} / {{ name }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Container Memory Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}",
+          "legendFormat": "{{ node }} / {{ name }} — usage",
+          "refId": "A"
+        },
+        {
+          "expr": "container_spec_memory_limit_bytes{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"} > 0",
+          "legendFormat": "{{ node }} / {{ name }} — limit",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "title": "Container Memory RSS",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "container_memory_rss{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}",
+          "legendFormat": "{{ node }} / {{ name }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Container Network I/O (bytes/s)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": { "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}[5m])",
+          "legendFormat": "{{ node }} / {{ name }} — rx",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(container_network_transmit_bytes_total{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}[5m])",
+          "legendFormat": "{{ node }} / {{ name }} — tx",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "title": "Container Filesystem Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "container_fs_usage_bytes{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}",
+          "legendFormat": "{{ node }} / {{ name }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Container Restarts",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 5 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "expr": "increase(container_start_time_seconds{node=~\"$node\", name=~\"$container\", name=~\".+\", name!~\"POD\"}[24h])",
+          "legendFormat": "{{ node }} / {{ name }}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["docker", "containers"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+        "definition": "label_values(container_last_seen{name=~\".+\"}, node)",
+        "includeAll": true,
+        "multi": true,
+        "name": "node",
+        "query": "label_values(container_last_seen{name=~\".+\"}, node)",
+        "refresh": 2,
+        "type": "query"
+      },
+      {
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+        "definition": "label_values(container_last_seen{node=~\"$node\", name=~\".+\", name!~\"POD\"}, name)",
+        "includeAll": true,
+        "multi": true,
+        "name": "container",
+        "query": "label_values(container_last_seen{node=~\"$node\", name=~\".+\", name!~\"POD\"}, name)",
+        "refresh": 2,
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "Docker Metrics",
+  "uid": "yantra-docker-metrics"
+}

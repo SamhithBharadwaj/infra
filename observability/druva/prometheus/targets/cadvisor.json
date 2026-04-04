@@ -1,0 +1,18 @@
+[
+  {
+    "targets": ["localhost:8080"],
+    "labels": { "node": "druva" }
+  },
+  {
+    "targets": ["192.168.1.x:8080"],
+    "labels": { "node": "ideapad" }
+  },
+  {
+    "targets": ["192.168.1.x:8080"],
+    "labels": { "node": "proxmox-nogpu" }
+  },
+  {
+    "targets": ["192.168.1.x:8080"],
+    "labels": { "node": "proxmox-gpu" }
+  }
+]
