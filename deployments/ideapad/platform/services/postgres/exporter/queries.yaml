@@ -1,0 +1,76 @@
+pg_up:
+  query: "SELECT 1 as up"
+  metrics:
+    - up:
+        usage: "GAUGE"
+        description: "Postgres is up"
+
+pg_connections:
+  query: |
+    SELECT datname, numbackends
+    FROM pg_stat_database
+  metrics:
+    - datname:
+        usage: "LABEL"
+    - numbackends:
+        usage: "GAUGE"
+        description: "Active connections"
+
+pg_xact:
+  query: |
+    SELECT datname, xact_commit, xact_rollback
+    FROM pg_stat_database
+  metrics:
+    - datname:
+        usage: "LABEL"
+    - xact_commit:
+        usage: "COUNTER"
+    - xact_rollback:
+        usage: "COUNTER"
+
+pg_db_size:
+  query: |
+    SELECT datname, pg_database_size(datname) as size
+    FROM pg_database
+  metrics:
+    - datname:
+        usage: "LABEL"
+    - size:
+        usage: "GAUGE"
+        description: "DB size in bytes"
+
+pg_stat_statements_calls:
+  query: |
+    SELECT queryid, calls
+    FROM pg_stat_statements
+    ORDER BY calls DESC
+    LIMIT 10
+  metrics:
+    - queryid:
+        usage: "LABEL"
+    - calls:
+        usage: "COUNTER"
+
+pg_stat_statements_total_time:
+  query: |
+    SELECT queryid, total_exec_time
+    FROM pg_stat_statements
+    ORDER BY total_exec_time DESC
+    LIMIT 10
+  metrics:
+    - queryid:
+        usage: "LABEL"
+    - total_exec_time:
+        usage: "COUNTER"
+
+pg_stat_statements_mean_time:
+  query: |
+    SELECT queryid, mean_exec_time
+    FROM pg_stat_statements
+    ORDER BY mean_exec_time DESC
+    LIMIT 10
+  metrics:
+    - queryid:
+        usage: "LABEL"
+    - mean_exec_time:
+        usage: "GAUGE"

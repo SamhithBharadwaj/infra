@@ -1,0 +1,12 @@
+# Environment variables (contains secrets)
+.env
+
+# Backups (can be large)
+backups/
+
+# Docker volumes data (if mounted locally)
+data/
+
+# OS files
+.DS_Store
+Thumbs.db
