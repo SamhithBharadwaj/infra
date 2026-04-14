@@ -39,7 +39,7 @@ services:
     networks:
       - platform
     environment:
-      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
       PG_EXPORTER_DISABLE_SETTINGS_METRICS: "true"
       PG_EXPORTER_AUTO_DISCOVER_DATABASES: "false"
     ports:
