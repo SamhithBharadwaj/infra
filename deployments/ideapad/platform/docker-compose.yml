@@ -33,25 +33,43 @@ services:
 
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter:v0.16.0
-    cpuset: "1-3"
     container_name: postgres-exporter
     restart: unless-stopped
+    cpuset: "1-3"
+
     networks:
       - platform
+
     environment:
       DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
       PG_EXPORTER_DISABLE_SETTINGS_METRICS: "true"
       PG_EXPORTER_AUTO_DISCOVER_DATABASES: "false"
+
     ports:
       - "9187:9187"
+
     depends_on:
       postgres:
         condition: service_healthy
+
     volumes:
       - ./services/postgres/exporter/queries.yaml:/etc/postgres_exporter/queries.yaml:ro
+
     command:
       - "--extend.query-path=/etc/postgres_exporter/queries.yaml"
       - "--disable-default-metrics"
+      - "--disable-settings-metrics"
+
+      # Explicitly disable remaining collectors
+      - "--no-collector.stat_database"
+      - "--no-collector.stat_user_tables"
+      - "--no-collector.statio_user_tables"
+      - "--no-collector.locks"
+      - "--no-collector.replication"
+      - "--no-collector.replication_slot"
+      - "--no-collector.wal"
+      - "--no-collector.roles"
+      - "--no-collector.database"
       - "--no-collector.stat_bgwriter"
 
   # ---------------------------------------------------------------------------
